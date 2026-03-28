@@ -16,10 +16,12 @@ from firecrown import parameters
 from firecrown.likelihood.source import (
     PhotoZShiftandStretchFactory,
     PhotoZShiftFactory,
+    SpecZStretchFactory,
     SourceGalaxy,
     SourceGalaxyArgs,
     SourceGalaxyPhotoZShift,
     SourceGalaxyPhotoZShiftandStretch,
+    SourceGalaxySpecZStretch,
     SourceGalaxySelectField,
     SourceGalaxySystematic,
     Tracer,
@@ -74,6 +76,10 @@ class PhotoZShift(SourceGalaxyPhotoZShift[NumberCountsArgs]):
 
 class PhotoZShiftandStretch(SourceGalaxyPhotoZShiftandStretch[NumberCountsArgs]):
     """Photo-z shift systematic."""
+
+
+class SpecZStretch(SourceGalaxySpecZStretch[NumberCountsArgs]):
+    """Spec-z stretch systematic."""
 
 
 class SelectField(SourceGalaxySelectField[NumberCountsArgs]):
@@ -613,7 +619,8 @@ NumberCountsSystematicFactory = Annotated[
     | LinearBiasSystematicFactory
     | PTNonLinearBiasSystematicFactory
     | MagnificationBiasSystematicFactory
-    | ConstantMagnificationBiasSystematicFactory,
+    | ConstantMagnificationBiasSystematicFactory
+    | SpecZStretchFactory,
     Field(discriminator="type", union_mode="left_to_right"),
 ]
 
