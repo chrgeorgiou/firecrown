@@ -317,7 +317,7 @@ def extract_window_function(
     if bandpower_window is None:
         return None, None
     ells = bandpower_window.values
-    weights = bandpower_window.weight / bandpower_window.weight.sum(axis=0)
+    weights = bandpower_window.weight  # / bandpower_window.weight.sum(axis=0)
     return ells, weights
 
 
