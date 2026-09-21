@@ -45,7 +45,6 @@ class NumberCountsArgs(SourceGalaxyArgs):
     has_pt: bool = False
     has_hm: bool = False
     b_2: None | tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]] = None
-    b_s: None | tuple[npt.NDArray[np.float64], npt.NDArray[np.float64]] = None
 
 
 class NumberCountsSystematic(SourceGalaxySystematic[NumberCountsArgs]):
@@ -154,7 +153,6 @@ class LinearBiasSystematic(NumberCountsSystematic):
 
 
 PT_NON_LINEAR_BIAS_DEFAULT_B_2 = 1.0
-PT_NON_LINEAR_BIAS_DEFAULT_B_S = 1.0
 
 
 class PTNonLinearBiasSystematic(NumberCountsSystematic):
@@ -168,7 +166,6 @@ class PTNonLinearBiasSystematic(NumberCountsSystematic):
     prefix for the parameters:
 
     :ivar b_2: the quadratic bias.
-    :ivar b_s: the stochastic bias.
     """
 
     def __init__(self, sacc_tracer: None | str = None):
@@ -181,9 +178,6 @@ class PTNonLinearBiasSystematic(NumberCountsSystematic):
         super().__init__(parameter_prefix=sacc_tracer)
         self.b_2 = parameters.register_new_updatable_parameter(
             default_value=PT_NON_LINEAR_BIAS_DEFAULT_B_2
-        )
-        self.b_s = parameters.register_new_updatable_parameter(
-            default_value=PT_NON_LINEAR_BIAS_DEFAULT_B_S
         )
 
     def apply(
@@ -198,13 +192,11 @@ class PTNonLinearBiasSystematic(NumberCountsSystematic):
         """
         z = tracer_arg.z
         b_2_z = self.b_2 * np.ones_like(z)
-        b_s_z = self.b_s * np.ones_like(z)
         # b_1 uses the "bias" field
         return replace(
             tracer_arg,
             has_pt=True,
             b_2=(z, b_2_z),
-            b_s=(z, b_s_z),
         )
 
 
@@ -489,10 +481,15 @@ class NumberCounts(SourceGalaxy[NumberCountsArgs]):
                 )
             )
         if tracer_args.has_pt:
+            bs = -(4./7.)*(tracer_args.bias-1)
+            b3nl = tracer_args.bias-1
+
             nc_pt_tracer = pyccl.nl_pt.PTNumberCountsTracer(
                 b1=(tracer_args.z, tracer_args.bias),
+                bs=(tracer_args.z, bs),
                 b2=tracer_args.b_2,
-                bs=tracer_args.b_s,
+                b3nl=(tracer_args.z, b3nl),
+                bk2=None
             )
 
             ccl_nc_dummy_tracer = pyccl.NumberCountsTracer(
