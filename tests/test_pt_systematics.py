@@ -100,7 +100,6 @@ def test_pt_systematics(weak_lensing_source, number_counts_source, sacc_data):
 
     b_1 = 2.0
     b_2 = 1.0
-    b_s = 1.0
 
     mag_bias = 1.0
 
@@ -111,7 +110,9 @@ def test_pt_systematics(weak_lensing_source, number_counts_source, sacc_data):
     # Code that creates Pk2D objects:
     ptt_i = pt.PTIntrinsicAlignmentTracer(c1=(z, c_1), c2=(z, c_2), cdelta=(z, c_d))
     ptt_m = pt.PTMatterTracer()
-    ptt_g = pt.PTNumberCountsTracer(b1=b_1, b2=b_2, bs=b_s)
+    ptt_g = pt.PTNumberCountsTracer(b1=b_1, b2=b_2,
+                                    bs=-(4./7.)*(b_1-1),
+                                    b3nl=b_1-1)
     # IA
     pk_im = pt_calculator.get_biased_pk2d(tracer1=ptt_i, tracer2=ptt_m)
     pk_ii = pt_calculator.get_biased_pk2d(tracer1=ptt_i, tracer2=ptt_i)
@@ -134,7 +135,6 @@ def test_pt_systematics(weak_lensing_source, number_counts_source, sacc_data):
             "ia_alphaz_d": 0.0,
             "lens0_bias": b_1,
             "lens0_b_2": b_2,
-            "lens0_b_s": b_s,
             "lens0_mag_bias": mag_bias,
             "src0_delta_z": 0.000,
             "lens0_delta_z": 0.000,
@@ -572,7 +572,6 @@ def test_pt_systematics_zdep(weak_lensing_source, number_counts_source, sacc_dat
 
     b_1 = 2.0
     b_2 = 1.0
-    b_s = 1.0
 
     mag_bias = 1.0
 
@@ -588,7 +587,9 @@ def test_pt_systematics_zdep(weak_lensing_source, number_counts_source, sacc_dat
         c1=(z, c_1_z), c2=(z, c_2_z), cdelta=(z, c_d_z)
     )
     ptt_m = pt.PTMatterTracer()
-    ptt_g = pt.PTNumberCountsTracer(b1=b_1, b2=b_2, bs=b_s)
+    ptt_g = pt.PTNumberCountsTracer(b1=b_1, b2=b_2,
+                                    bs=-(4./7.)*(b_1-1),
+                                    b3nl=b_1-1)
     # IA
     pk_im = pt_calculator.get_biased_pk2d(tracer1=ptt_i, tracer2=ptt_m)
     pk_ii = pt_calculator.get_biased_pk2d(tracer1=ptt_i, tracer2=ptt_i)
@@ -611,7 +612,6 @@ def test_pt_systematics_zdep(weak_lensing_source, number_counts_source, sacc_dat
             "ia_alphaz_d": a_d_alpha,
             "lens0_bias": b_1,
             "lens0_b_2": b_2,
-            "lens0_b_s": b_s,
             "lens0_mag_bias": mag_bias,
             "src0_delta_z": 0.000,
             "lens0_delta_z": 0.000,
@@ -748,7 +748,6 @@ def test_linear_bias_systematic(tools_with_vanilla_cosmology: ModelingTools):
         has_pt=False,
         has_hm=False,
         b_2=(np.array([5.0, 6.0]), np.array([6.0, 7.0])),
-        b_s=(np.array([7.0, 8.0]), np.array([8.0, 9.0])),
     )
 
     nca = a.apply(tools_with_vanilla_cosmology, orig_nca)
